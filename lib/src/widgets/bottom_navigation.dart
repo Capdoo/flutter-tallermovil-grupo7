@@ -22,7 +22,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(CustomIcons.pets),
-          label: "Ver mascotas",
+          label: "Mis mascotas",
         ),
         BottomNavigationBarItem(
           icon: Icon(CustomIcons.village),
