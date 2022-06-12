@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter_tallermovil_grupo7/src/search/search_delegate.dart';
 import 'package:flutter_tallermovil_grupo7/src/widgets/bottom_navigation.dart';
 import 'package:flutter_tallermovil_grupo7/src/widgets/custom_card.dart';
 
@@ -76,7 +77,7 @@ class _HomeState extends State<Home> {
             icon: const Icon(Icons.search),
             tooltip: 'Search',
             onPressed: () {
-              // openSearchPage(context);
+              showSearch(context: context, delegate: PetsLostSearch());
             },
           ),
         ],

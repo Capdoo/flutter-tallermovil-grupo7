@@ -6,9 +6,9 @@ import 'package:flutter_tallermovil_grupo7/src/screens/my_refugees.dart';
 import 'package:flutter_tallermovil_grupo7/src/screens/sign_up.dart';
 import 'package:flutter_tallermovil_grupo7/src/screens/sign_upp_app.dart';
 import 'package:flutter_tallermovil_grupo7/src/screens/landing_page.dart';
-import 'package:flutter_tallermovil_grupo7/src/screens/report-pet.dart';
+import 'package:flutter_tallermovil_grupo7/src/screens/report_pet.dart';
 
-const initialRoute = "/home";
+const initialRoute = "/landing";
 
 final Map<String, WidgetBuilder> routes = {
   '/landing': (context) => const Landing(),
@@ -17,5 +17,5 @@ final Map<String, WidgetBuilder> routes = {
   '/login': (context) => const Login(),
   '/my-refuges': (context) => const Refuges(),
   '/my-pets':(context) => const MyPets(),
-  '/home': (context) => const Home()
+  '/': (context) => const Home()
 };
