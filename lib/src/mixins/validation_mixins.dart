@@ -67,4 +67,9 @@ class ValidationMixins {
     }
     return null;
   }
+
+  String? validateColor(String? value){
+
+  }
+
 }
