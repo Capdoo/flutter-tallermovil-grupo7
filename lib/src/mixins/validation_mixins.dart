@@ -67,4 +67,28 @@ class ValidationMixins {
     }
     return null;
   }
+
+  String? validateDate(String? value){
+    if(value != null && value.isEmpty){
+      return 'Fecha es requerida';
+    }
+  }
+
+
+  String? validateDescription(String? value) {
+    if (value != null && value.isEmpty) {
+      return 'Descripción es requerida';
+    }
+    return null;
+  }
+
+
+  String? validateNamePet(String? value) {
+    if (value != null && value.isEmpty) {
+      return 'Nombre mascota es requerido';
+    }
+    return null;
+  }
+
+
 }
