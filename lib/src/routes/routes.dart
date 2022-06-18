@@ -10,8 +10,7 @@ import 'package:flutter_tallermovil_grupo7/src/screens/landing_page.dart';
 import 'package:flutter_tallermovil_grupo7/src/screens/report_pet.dart';
 import 'package:flutter_tallermovil_grupo7/src/screens/pet_register.dart';
 
-
-const initialRoute = "/home";
+const initialRoute = "/landing";
 
 final Map<String, WidgetBuilder> routes = {
   '/landing': (context) => const Landing(),
@@ -21,6 +20,7 @@ final Map<String, WidgetBuilder> routes = {
   '/my-refuges': (context) => const Refuges(),
   '/my-pets': (context) => const MyPets(),
   '/': (context) => const Home(),
+  '/report-pet': (context) => const ReportPet(),
   '/pet-details': (context) => const PetDetails(),
   '/pet-register': (context) => const PetRegister()
 };

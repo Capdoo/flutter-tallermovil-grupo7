@@ -81,7 +81,7 @@ class _ReportPetState extends State<ReportPet> with ValidationMixins {
                       TextInput(
                           hintText: "Tus nombres",
                           //FIXME: CREATE VALIDATOR
-                          validator: validateUser,
+                          validator: validateName,
                           onSaved: (value) {
                             print(value);
                           }),
@@ -89,7 +89,7 @@ class _ReportPetState extends State<ReportPet> with ValidationMixins {
                       TextInput(
                           hintText: "Dirección de avistamiento",
                           //FIXME: CREATE VALIDATOR
-                          validator: validateUser,
+                          validator: validateAddress,
                           onSaved: (value) {
                             print(value);
                           }),
@@ -97,7 +97,7 @@ class _ReportPetState extends State<ReportPet> with ValidationMixins {
                       TextInput(
                           hintText: "Detalles de avistamiento",
                           //FIXME: CREATE VALIDATOR
-                          validator: validateUser,
+                          validator: validateDeatils,
                           onSaved: (value) {
                             print(value);
                           }),
