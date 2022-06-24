@@ -1,9 +1,26 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import 'package:flutter_tallermovil_grupo7/src/widgets/bottom_navigation.dart';
 import 'package:flutter_tallermovil_grupo7/src/widgets/custom_card.dart';
 import 'package:flutter_tallermovil_grupo7/src/widgets/space.dart';
 import 'package:flutter_tallermovil_grupo7/src/widgets/text_input.dart';
+
 import 'package:flutter_tallermovil_grupo7/src/mixins/validation_mixins.dart';
+
+//Nuevos: Rafa
+import 'package:flutter_tallermovil_grupo7/src/widgets/date_input.dart';
+import 'package:flutter_tallermovil_grupo7/src/widgets/text_input_icon.dart';
+import 'package:flutter_tallermovil_grupo7/src/widgets/dropdown_input.dart';
+import 'package:flutter_tallermovil_grupo7/src/widgets/text_area_input.dart';
+import 'package:flutter_tallermovil_grupo7/src/widgets/image_input_icon.dart';
+
+import 'package:image_picker/image_picker.dart';
+
 
 
 class PetRegister extends StatefulWidget{
@@ -16,23 +33,82 @@ class _PetRegisterState extends State<PetRegister> with ValidationMixins{
   int _selectedIndex = 0;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  final List<DropdownMenuItem<String>>? listaSexo = [
+    DropdownMenuItem(child: Text("Hembra"),value: "Hembra",),
+    DropdownMenuItem(child: Text("Macho"),value: "Macho",),
+  ];
+
+  final List<DropdownMenuItem<String>>? listaEspecie = [
+    DropdownMenuItem(child: Text("Perro"),value: "Perro",),
+    DropdownMenuItem(child: Text("Gato"),value: "Gato",),
+    DropdownMenuItem(child: Text("Loro"),value: "Loro",),
+  ];
+
+  final List<DropdownMenuItem<String>>? listaRazaPerro = [
+    DropdownMenuItem(child: Text("Beagle"),value: "Beagle",),
+    DropdownMenuItem(child: Text("Labrador retriever"),value: "Labrador retriever",),
+    DropdownMenuItem(child: Text("Bulldog"),value: "Bulldog",),
+  ];
+
+  final List<DropdownMenuItem<String>>? listaTamano = [
+    DropdownMenuItem(child: Text("Pequeño"),value: "Pequeño",),
+    DropdownMenuItem(child: Text("Mediano"),value: "Mediano",),
+    DropdownMenuItem(child: Text("Grande"),value: "Grande",),
+  ];
+
+
+  final String sexoDefecto = 'Seleccione el sexo';
+  //Controladores
+  TextEditingController dateInput = TextEditingController();
+  String? nombreValue='';
+  String? sexoValue='';
+  String? fechaValue='';
+  String? especieValue='';
+  String? razaValue='';
+  String? colorValue='';
+
+  String? tamanoValue='';
+  String? caracteristicasValue='';
+
+  final String imagenPath='assets/images/pet-profile-def.png';
+
+  //Imágen mascota
+  File? _pickedImage; //Para movil
+  Uint8List webImage = Uint8List(8);  //Para web
+
+
+  Future<void> pickImage2() async{
+    //Si es movil
+    if(!kIsWeb){
+      final ImagePicker _picker = ImagePicker();
+      XFile? myImage = await _picker.pickImage(source: ImageSource.gallery);
+      if(myImage != null){
+        var selected = File(myImage.path);
+        setState((){
+          _pickedImage = selected;
+        });
+      }else{
+        print("Ninguna imagen fue seleccionada");
+      }
+    }else if(kIsWeb){
+      final ImagePicker _picker = ImagePicker();
+      XFile? myImage = await _picker.pickImage(source: ImageSource.gallery);
+      if(myImage != null){
+         var f =  await myImage.readAsBytes();
+         setState((){
+          webImage = f;
+          _pickedImage = File('a');
+         });
+      }else{
+        print("Ninguna imagen fue seleccionada");
+      }
+    }else{
+      print('Algo salió mal');
+    }
+  }
 
   //Para toda la screen
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Mascotas perdidas',
-      style: optionStyle
-    ),
-    Text(
-      'Index 1: Ver mascotas',
-      style: optionStyle
-    ),
-    Text(
-      'Index2: Mis Refugios',
-      style: optionStyle,
-    ),
-  ];
 
   void _onItemTapped(int index){
     setState( (){
@@ -75,6 +151,19 @@ class _PetRegisterState extends State<PetRegister> with ValidationMixins{
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState?.save();
+
+          print(nombreValue);
+          print(sexoValue);
+          print(fechaValue);
+          print(especieValue);
+          print(razaValue);
+          print(colorValue);
+          print(tamanoValue);
+          print(caracteristicasValue);
+
+          //La imagen web se obtiene como bytes
+          //print(webImage.toString());
+
           Navigator.pushNamed(context, "/sign-up-app");
         }
       },
@@ -90,6 +179,7 @@ class _PetRegisterState extends State<PetRegister> with ValidationMixins{
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -108,14 +198,11 @@ class _PetRegisterState extends State<PetRegister> with ValidationMixins{
       ),
       drawer: getDrawer(context),
 
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xff03dac6),
-        foregroundColor: Colors.black,
-        onPressed: (){},
-        child: const Icon(Icons.add),
-      ),
+
 
       body: SingleChildScrollView(
+        child: Form(
+
           child: Column(children: [
             addVerticalSpace(25),
             Padding(padding: const EdgeInsets.all(15),
@@ -133,64 +220,105 @@ class _PetRegisterState extends State<PetRegister> with ValidationMixins{
                 child: Form(
                     key: _formKey,
                     child: Column(children: [
-                      TextInput(
-
+                      TextInputIcon(
                           hintText: "Nombre",
-                          validator: validateLastName,
+                          validator: validateNamePet,
                           onSaved: (value) {
-                            print(value);
+                            nombreValue = value;
                           },
-
+                          nameIcon: Icon(Icons.pets),
+                      ),
+                      addVerticalSpace(30),
+                      DropDownInput(
+                          hintText: "Sexo",
+                          onSaved: (value) {
+                            sexoValue = value;
+                          },
+                          nameIcon: Icon(Icons.transgender),
+                          listaItems: listaSexo,
+                          onChanged: (String? value){
+                            sexoValue = value;
+                          },
                           ),
                       addVerticalSpace(30),
-                      TextInput(
-                          hintText: "Sexo",
-                          validator: validateLastName,
-                          onSaved: (value) {
-                            print(value);
-                          }),
-                      addVerticalSpace(30),
-                      TextInput(
+                      DateInput(
+                          controller: dateInput,
                           hintText: "Fecha de nacimiento",
-                          validator: validateDNI,
-                          keyboardType: TextInputType.number,
+                          validator: validateDate,
+                          keyboardType: TextInputType.datetime,
                           onSaved: (value) {
-                            print(value);
+                            fechaValue = value;
                           }),
                       addVerticalSpace(30),
-                      TextInput(
+                      DropDownInput(
                           hintText: "Especie",
-                          validator: validateAddress,
                           onSaved: (value) {
-                            print(value);
-                          }),
+                            especieValue = value;
+                          },
+                          nameIcon: Icon(Icons.cookie),
+                          listaItems: listaEspecie,
+                          onChanged: (String? value){
+                            especieValue = value;
+                          },
+                          ),
                       addVerticalSpace(30),
-                      TextInput(
-                          hintText: "Raza",
-                          keyboardType: TextInputType.number,
-                          validator: validatePhone,
-                          onSaved: (value) {
-                            print(value);
-                          }),
+                      DropDownInput(
+                        hintText: "Raza",
+                        onSaved: (value) {
+                          razaValue = value;
+                        },
+                        nameIcon: Icon(Icons.radar),
+                        listaItems: listaRazaPerro,
+                        onChanged: (String? value){
+                          razaValue = value;
+                        },
+                      ),
                       addVerticalSpace(30),
-                      TextInput(
-                          hintText: "Color",
-                          keyboardType: TextInputType.number,
-                          validator: validatePhone,
-                          onSaved: (value) {
-                            print(value);
-                          }),
+                      DropDownInput(
+                        hintText: "Tamaño",
+                        onSaved: (value) {
+                          tamanoValue = value;
+                        },
+                        nameIcon: Icon(Icons.format_size),
+                        listaItems: listaTamano,
+                        onChanged: (String? value){
+                          tamanoValue = value;
+                        },
+                      ),
+                      addVerticalSpace(30),
+                      TextAreaInput(
+                        hintText: "Descripción",
+                        validator: validateLastName,
+                        onSaved: (value) {
+                          colorValue = value;
+                        },
+                      ),
+                      addVerticalSpace(30),
+                      ImageInputIcon(
+                        title: "Elegir imagen de la mascota",
+                        icon: Icons.image_outlined,
+                        onClicked: () => pickImage2(),
+                      ),
                       addVerticalSpace(30),
 
+                      _pickedImage == null ?
+                          Image(image: AssetImage(imagenPath),width: 160,height: 160,fit: BoxFit.cover,) :
+                          kIsWeb ?
+                              ClipOval(
+                                child: Image.memory(webImage,fit: BoxFit.cover,width: 160, height: 160,),
+                              )
+                              :
+                              ClipOval(
+                                child:Image.file(_pickedImage!, fit: BoxFit.cover,),
+                              ),
+                      addVerticalSpace(30),
 
                       _submitButton()
                     ])))
-          ])),
-
-        //bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onItemTapped)
-
-
-      );
+          ])
+        )
+      ),
+    );
 
   }
 
