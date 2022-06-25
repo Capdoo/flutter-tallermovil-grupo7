@@ -50,6 +50,13 @@ class ValidationMixins {
     return null;
   }
 
+  String? validateDeatils(String? value) {
+    if (value != null && value.isEmpty) {
+      return 'Detalles es  Requerido';
+    }
+    return null;
+  }
+
   String? validateUser(String? value) {
     if (value != null && value.isEmpty) {
       return 'Usuario es requerido';
